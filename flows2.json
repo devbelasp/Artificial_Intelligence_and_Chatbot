@@ -1,0 +1,300 @@
+[
+    {
+        "id": "0436aab67d1a5302",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "deef3d9cdc9fd48d",
+        "type": "telegram receiver",
+        "z": "0436aab67d1a5302",
+        "name": "",
+        "bot": "74677cd78732490e",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 90,
+        "y": 200,
+        "wires": [
+            [
+                "539d4b534fdc5192"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "72e61a611dbfc7f9",
+        "type": "telegram sender",
+        "z": "0436aab67d1a5302",
+        "name": "",
+        "bot": "74677cd78732490e",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1310,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5adf5cdd469fd85c",
+        "type": "debug",
+        "z": "0436aab67d1a5302",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 940,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "c714572ab2d8bad4",
+        "type": "function",
+        "z": "0436aab67d1a5302",
+        "name": "Proc Entrada Audio",
+        "func": "msg.params = {\n    \"session_id\": 123\n\n};\nmsg.chatId = msg.payload.chatId;\nmsg.payload = msg.payload.weblink;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 60,
+        "wires": [
+            [
+                "71169b4cc77aa648"
+            ]
+        ]
+    },
+    {
+        "id": "e0ec825d353478ca",
+        "type": "watson-assistant-v2",
+        "z": "0436aab67d1a5302",
+        "name": "",
+        "service-endpoint": "https://api.us-south.assistant.watson.cloud.ibm.com/instances/c432413a-a6d5-4eff-b301-b28d0e0c5490",
+        "assistant_id": "85bb67d4-3a3d-4a3b-a0f5-dcc82bd597cd",
+        "debug": false,
+        "restart": false,
+        "return_context": true,
+        "alternate_intents": false,
+        "multisession": true,
+        "timeout": "",
+        "optout-learning": false,
+        "persist-session-id": false,
+        "x": 630,
+        "y": 180,
+        "wires": [
+            [
+                "e2981874be44c992",
+                "fabe026ce8374bb8"
+            ]
+        ]
+    },
+    {
+        "id": "e2981874be44c992",
+        "type": "function",
+        "z": "0436aab67d1a5302",
+        "name": "Proc Saida Watson",
+        "func": "msg.payload = {\n    chatId: msg.chatId,\n    type: \"message\",\n    content: msg.payload.output.generic[0].text\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 160,
+        "wires": [
+            [
+                "72e61a611dbfc7f9",
+                "5b1be209906bae0c"
+            ]
+        ]
+    },
+    {
+        "id": "27c6a13cfa30b8cf",
+        "type": "function",
+        "z": "0436aab67d1a5302",
+        "name": "Proc Entrada Texto",
+        "func": "msg.params = {\n    \"session_id\": 123\n};\nmsg.chatId = msg.payload.chatId;\nmsg.payload = msg.payload.content;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 280,
+        "wires": [
+            [
+                "e0ec825d353478ca"
+            ]
+        ]
+    },
+    {
+        "id": "539d4b534fdc5192",
+        "type": "switch",
+        "z": "0436aab67d1a5302",
+        "name": "",
+        "property": "payload.type",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "voice",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "message",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 290,
+        "y": 140,
+        "wires": [
+            [
+                "c714572ab2d8bad4"
+            ],
+            [
+                "27c6a13cfa30b8cf"
+            ]
+        ]
+    },
+    {
+        "id": "71169b4cc77aa648",
+        "type": "watson-speech-to-text",
+        "z": "0436aab67d1a5302",
+        "name": "",
+        "alternatives": 1,
+        "speakerlabels": true,
+        "smartformatting": false,
+        "lang": "pt-BR",
+        "langhidden": "pt-BR",
+        "langcustom": "NoCustomisationSetting",
+        "langcustomhidden": "",
+        "custom-weight": "0.5",
+        "band": "NarrowbandModel",
+        "bandhidden": "",
+        "keywords": "",
+        "keywords-threshold": "0.5",
+        "word-confidence": false,
+        "password": "",
+        "apikey": "7qtoJdcTErGn7i5LIEKed8ElOOAkfZYRSGKK-ir6pEf7",
+        "payload-response": true,
+        "streaming-mode": false,
+        "streaming-mute": true,
+        "auto-connect": false,
+        "discard-listening": false,
+        "disable-precheck": false,
+        "service-endpoint": "https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/b6d3d9a0-a447-4c5f-8bd2-69ffec095795",
+        "x": 640,
+        "y": 60,
+        "wires": [
+            [
+                "e0ec825d353478ca"
+            ]
+        ]
+    },
+    {
+        "id": "5b1be209906bae0c",
+        "type": "watson-text-to-speech",
+        "z": "0436aab67d1a5302",
+        "name": "",
+        "lang": "pt-BR",
+        "langhidden": "pt-BR",
+        "langcustom": "NoCustomisationSetting",
+        "langcustomhidden": "",
+        "voice": "pt-BR_LucasExpressive",
+        "voicehidden": "pt-BR_LucasExpressive",
+        "format": "audio/wav",
+        "password": "",
+        "apikey": "VF25ScZtiTh3BFxcBpW0Q3gycpcLDmNmBjQUksFYreOP",
+        "payload-response": true,
+        "service-endpoint": "https://api.us-south.text-to-speech.watson.cloud.ibm.com/instances/a1341ba9-4545-4d8a-b11f-f54616aebd9b",
+        "x": 1000,
+        "y": 300,
+        "wires": [
+            [
+                "ceec3f3e1d99d928"
+            ]
+        ]
+    },
+    {
+        "id": "ceec3f3e1d99d928",
+        "type": "function",
+        "z": "0436aab67d1a5302",
+        "name": "Proc Saida Texto para Audio",
+        "func": "msg.payload = {\n    chatId: msg.chatId,\n    type: \"voice\",\n    content: msg.payload\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1300,
+        "y": 360,
+        "wires": [
+            [
+                "72e61a611dbfc7f9"
+            ]
+        ]
+    },
+    {
+        "id": "fabe026ce8374bb8",
+        "type": "function",
+        "z": "0436aab67d1a5302",
+        "name": "Proc Saida Watson",
+        "func": "msg.payload = msg.payload.output.generic[0].text;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 320,
+        "wires": [
+            [
+                "5b1be209906bae0c",
+                "5adf5cdd469fd85c"
+            ]
+        ]
+    },
+    {
+        "id": "74677cd78732490e",
+        "type": "telegram bot",
+        "botname": "health_tech1_bot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    }
+]
